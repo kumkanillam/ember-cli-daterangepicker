@@ -30,12 +30,28 @@ export default Ember.Component.extend({
     parentEl: 'body',
     format: 'MMM D, YYYY',
     serverFormat: 'YYYY-MM-DD',
+    format24WithSeconds: 'MMM D, YYYY, HH:mm:ss',
+    format24WithoutSeconds:'MMM D, YYYY, HH:mm',
+    format12WithSeconds:'MMM D, YYYY, hh:mm:ss A',
+    format12WithoutSeconds:'MMM D, YYYY, hh:mm A',
     rangeText: computed('start', 'end', 'chosenLabel', function() {
         let format = this.get('format');
         let serverFormat = this.get('serverFormat');
         let start = this.get('start');
         let end = this.get('end');
         let chosenLabel = this.get('chosenLabel');
+        let timePicker=this.get('timePicker');
+        if(timePicker)
+        {
+            // format='MMM D, YYYY (HH:mm:ss)';
+            if(this.get('timePicker24Hour'))
+            {
+                format = this.get('timePickerSeconds') ? this.get('format24WithSeconds'):this.get('format24WithoutSeconds') ; 
+            }
+            else{
+                format = this.get('timePickerSeconds') ? this.get('format12WithSeconds'):this.get('format12WithoutSeconds') ;
+            }
+        }
         //TODO need to check with dateRanges in o365attributes for corresponding id for custom range.
         if (this.get('singleDatePicker') === false && Ember.isPresent(chosenLabel) && chosenLabel === 'Custom Range') {
             if (!isEmpty(start) && !isEmpty(end)) {
@@ -140,7 +156,7 @@ export default Ember.Component.extend({
             for (var range in ranges) {
                 if (range !== "All Time") {
                     if (this.get('timePicker')) {
-                        if (start.isSame(ranges[range][0]) && end.isSame(ranges[range][1])) {
+                        if (this.start.format(this.serverFormat) == this.ranges[range][0].format(this.serverFormat) && this.end.format(this.serverFormat) == this.ranges[range][1].format(this.serverFormat)) {
                             customRange = false;
                             // this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').html();
                             this.set('chosenLabel', range);
@@ -173,6 +189,7 @@ export default Ember.Component.extend({
     },
     // Init the dropdown when the component is added to the DOM
     didInsertElement() {
+        // console.log("locale:",this.locale);
         this._super(...arguments);
         this.setupPicker();
     },
@@ -207,6 +224,7 @@ export default Ember.Component.extend({
         let momentMaxDate = moment(this.get('maxDate'), this.get('serverFormat'));
         let minDate = momentMinDate.isValid() ? momentMinDate : undefined;
         let maxDate = momentMaxDate.isValid() ? momentMaxDate : undefined;
+        // let isAllTime=startDate == undefined ? true : false;
 
         let options = this.getProperties(
             'isInvalidDate',
@@ -253,6 +271,7 @@ export default Ember.Component.extend({
             endDate: endDate,
             minDate: minDate,
             maxDate: maxDate,
+            // isAllTime:isAllTime
         };
 
         if (!this.get('singleDatePicker')) {
@@ -268,6 +287,7 @@ export default Ember.Component.extend({
     },
 
     _setupPicker() {
+        // console.log("getoptjions",this.getOptions());
         this.$('.daterangepicker-input').daterangepicker(this.getOptions());
         if(isPresent(this.datePickerDropDownId)){
             $('.daterangepicker').each((i,e)=>{
