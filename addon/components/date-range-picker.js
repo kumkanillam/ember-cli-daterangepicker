@@ -30,6 +30,10 @@ export default Ember.Component.extend({
     parentEl: 'body',
     format: 'MMM D, YYYY',
     serverFormat: 'YYYY-MM-DD',
+    format24WithSeconds: 'MMM D, YYYY, HH:mm:ss',
+    format24WithoutSeconds:'MMM D, YYYY, HH:mm',
+    format12WithSeconds:'MMM D, YYYY, hh:mm:ss A',
+    format12WithoutSeconds:'MMM D, YYYY, hh:mm A',
     rangeText: computed('start', 'end', 'chosenLabel', function() {
         let format = this.get('format');
         let serverFormat = this.get('serverFormat');
@@ -42,22 +46,10 @@ export default Ember.Component.extend({
             // format='MMM D, YYYY (HH:mm:ss)';
             if(this.get('timePicker24Hour'))
             {
-                if(this.get('timePickerSeconds'))
-                {
-                    format='MMM D, YYYY, HH:mm:ss';
-                }
-                else{
-                    format='MMM D, YYYY, HH:mm';
-                }
+                format = this.get('timePickerSeconds') ? this.get('format24WithSeconds'):this.get('format24WithoutSeconds') ; 
             }
             else{
-                if(this.get('timePickerSecond'))
-                {
-                    format='MMM D, YYYY, hh:mm:ss A';
-                }
-                else{
-                    format='MMM D, YYYY, hh:mm A';
-                }
+                format = this.get('timePickerSeconds') ? this.get('format12WithSeconds'):this.get('format12WithoutSeconds') ;
             }
         }
         //TODO need to check with dateRanges in o365attributes for corresponding id for custom range.
