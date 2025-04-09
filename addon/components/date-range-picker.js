@@ -182,11 +182,13 @@ export default Component.extend({
                 }
             }
         } else if (!start.isValid() && !end.isValid()) {
-            this.set('chosenLabel', 'All Time');
             if(this.get('showSelectByDefault'))
             {
                 this.set('chosenLabel', 'Select');
             }
+          else{
+            this.set('chosenLabel', 'All Time');
+          }
         }
     },
     // Init the dropdown when the component is added to the DOM
