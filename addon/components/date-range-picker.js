@@ -138,6 +138,7 @@ export default Component.extend({
     datePickerDropDownId:null,
 	subLabel: "",
 	customClass: "",
+    showSelectByDefault:false,
 
     didReceiveAttrs() {
         this._super(...arguments);
@@ -181,7 +182,13 @@ export default Component.extend({
                 }
             }
         } else if (!start.isValid() && !end.isValid()) {
+            if(this.get('showSelectByDefault'))
+            {
+                this.set('chosenLabel', 'Select');
+            }
+          else{
             this.set('chosenLabel', 'All Time');
+          }
         }
     },
     // Init the dropdown when the component is added to the DOM
